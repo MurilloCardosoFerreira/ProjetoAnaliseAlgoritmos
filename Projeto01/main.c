@@ -1,18 +1,27 @@
 #include <stdio.h>
 
 #define TAM 7
-#define MOVIMENTOS 31
+#define MOVIMENTOS_MAX 31
 
 int tabuleiro[TAM][TAM] =
 {
-{0, 0, 1, 1, 1, 0, 0},
-{0, 0, 1, 1, 1, 0, 0},
-{1, 1, 1, 1, 1, 1, 1},
-{1, 1, 1, -1, 1, 1, 1},
-{1, 1, 1, 1, 1, 1, 1},
-{0, 0, 1, 1, 1, 0, 0},
-{0, 0, 1, 1, 1, 0, 0}
+  {0, 0, 1, 1, 1, 0, 0},
+  {0, 0, 1, 1, 1, 0, 0},
+  {1, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, -1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 1},
+  {0, 0, 1, 1, 1, 0, 0},
+  {0, 0, 1, 1, 1, 0, 0}
 };
+
+// Estrutura para armazenar os movimentos das peças
+typedef struct {
+  int origem_x, origem_y;
+  int destino_x, destino_y;
+} Movimento;
+
+Movimento movimentos[MOVIMENTOS_MAX];
+int num_movimentos = 0;
 
 // Função para imprimir o estado do tabuleiro
 void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
@@ -59,6 +68,9 @@ void movimentarPeca(int x1, int y1, int x2, int y2)
   tabuleiro[x1][y1] = -1;
   tabuleiro[xMedia][yMedia] = -1;
   tabuleiro[x2][y2] = 1;
+
+  // Armazena o movimento
+  movimentos[num_movimentos++] = (Movimento){x1, y1, x2, y2};
 }
 
 void desfazerMovimento(int x1, int y1, int x2, int y2)
@@ -69,6 +81,9 @@ void desfazerMovimento(int x1, int y1, int x2, int y2)
   tabuleiro[x1][y1] = 1;
   tabuleiro[xMedia][yMedia] = 1;
   tabuleiro[x2][y2] = -1;
+
+  // Desfaz o último movimento armazenado
+  num_movimentos--;
 }
 
 int resolverTabuleiro(int movimentosRestantes)
@@ -109,14 +124,48 @@ int resolverTabuleiro(int movimentosRestantes)
   return 0;
 }
 
+// Função para imprimir a sequência de movimentos
+void imprimirCaminho() {
+  printf("Sequência de movimentos:\n");
+  for (int i = 0; i < num_movimentos; i++) {
+    printf("Movimento %d: (%d, %d) -> (%d, %d)\n",
+           i + 1,
+           movimentos[i].origem_x, movimentos[i].origem_y,
+           movimentos[i].destino_x, movimentos[i].destino_y);
+  }
+}
+
+// Função para salvar os movimentos em um arquivo
+void salvarMovimentosEmArquivo(const char* nomeArquivo) {
+  FILE* arquivo = fopen(nomeArquivo, "w");
+  if (arquivo == NULL) {
+    printf("Erro ao abrir o arquivo.\n");
+    return;
+  }
+
+  fprintf(arquivo, "Sequência de movimentos:\n");
+  for (int i = 0; i < num_movimentos; i++) {
+    fprintf(arquivo, "Movimento %d: (%d, %d) -> (%d, %d)\n",
+            i + 1,
+            movimentos[i].origem_x, movimentos[i].origem_y,
+            movimentos[i].destino_x, movimentos[i].destino_y);
+  }
+
+  fclose(arquivo);
+  printf("Movimentos salvos no arquivo %s\n", nomeArquivo);
+}
+
+// Função principal
 int main(void) 
 {
   printf("Estado inicial do tabuleiro:\n");
   imprimirTabuleiro(tabuleiro);
-  
-  if (resolverTabuleiro(MOVIMENTOS))
+
+  if (resolverTabuleiro(MOVIMENTOS_MAX))
   {
     printf("Solução encontrada!\n");
+    imprimirCaminho();
+    salvarMovimentosEmArquivo("movimentos_resta_um.txt");
   }
   else
   {
