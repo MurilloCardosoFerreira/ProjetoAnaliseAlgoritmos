@@ -1,3 +1,8 @@
+//Nome: Alexandre Luppi Severo e Silva      RA: 10419724
+//Nome:         RA:
+//Nome:         RA:
+
+
 #include <stdio.h>
 
 #define TAM 7
