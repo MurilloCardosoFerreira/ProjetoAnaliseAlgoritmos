@@ -33,15 +33,18 @@ void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
   for (int i = 0; i < TAM; i++) {
     for (int j = 0; j < TAM; j++) {
       if (tabuleiro[i][j] == 0) {
-        printf(" 0 ");
-      } else {
-        printf(" %d ", tabuleiro[i][j]);
+        printf(" # ");
+      } else if (tabuleiro[i][j] == 1) {
+        printf(" O ");
+      } else if (tabuleiro[i][j] == -1) {
+        printf("   "); // Espaço em branco
       }
     }
     printf("\n");
   }
   printf("\n");
 }
+
 
 int movimentoEhValido(int x1, int y1, int x2, int y2)
 {
@@ -170,7 +173,7 @@ int main(void)
   {
     printf("Solução encontrada!\n");
     imprimirCaminho();
-    salvarMovimentosEmArquivo("movimentos_resta_um.txt");
+    salvarMovimentosEmArquivo("RestaUm.out");
   }
   else
   {
