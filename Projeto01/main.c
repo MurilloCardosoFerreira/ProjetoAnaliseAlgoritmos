@@ -2,6 +2,7 @@
 //Nome: Murillo Cardoso Ferreira            RA: 10418082
 //Nome: Davi de Carvalho Sampaio            RA: 10428169
 
+
 #include <stdio.h>
 #include <stdlib.h> // Para malloc e free
 
@@ -58,6 +59,36 @@ void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
     printf("\n");
   }
   printf("\n");
+}
+
+// Função para salvar todos os estados do tabuleiro em um arquivo
+void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
+  FILE* arquivo = fopen(nomeArquivo, "w");
+  if (arquivo == NULL) {
+    printf("Erro ao abrir o arquivo.\n");
+    return;
+  }
+
+  fprintf(arquivo, "Estados do tabuleiro:\n");
+  for (int i = 0; i <= num_movimentos; i++) {
+    fprintf(arquivo, "Estado %d:\n", i + 1);
+    for (int linha = 0; linha < TAM; linha++) {
+      for (int coluna = 0; coluna < TAM; coluna++) {
+        if (estados[i].tabuleiro[linha][coluna] == 0) {
+          fprintf(arquivo, " # ");
+        } else if (estados[i].tabuleiro[linha][coluna] == 1) {
+          fprintf(arquivo, " O ");
+        } else if (estados[i].tabuleiro[linha][coluna] == -1) {
+          fprintf(arquivo, "   "); // Espaço em branco
+        }
+      }
+      fprintf(arquivo, "\n");
+    }
+    fprintf(arquivo, "\n");
+  }
+
+  fclose(arquivo);
+  printf("Estados salvos no arquivo %s\n", nomeArquivo);
 }
 
 int movimentoEhValido(int x1, int y1, int x2, int y2)
@@ -149,37 +180,6 @@ int resolverTabuleiro(int movimentosRestantes)
   return 0;
 }
 
-// Função para imprimir a sequência de movimentos
-void imprimirCaminho() {
-  printf("Sequência de movimentos:\n");
-  for (int i = 0; i < num_movimentos; i++) {
-    printf("Movimento %d: (%d, %d) -> (%d, %d)\n",
-           i + 1,
-           movimentos[i].origem_x, movimentos[i].origem_y,
-           movimentos[i].destino_x, movimentos[i].destino_y);
-  }
-}
-
-// Função para salvar os movimentos em um arquivo
-void salvarMovimentosEmArquivo(const char* nomeArquivo) {
-  FILE* arquivo = fopen(nomeArquivo, "w");
-  if (arquivo == NULL) {
-    printf("Erro ao abrir o arquivo.\n");
-    return;
-  }
-
-  fprintf(arquivo, "Sequência de movimentos:\n");
-  for (int i = 0; i < num_movimentos; i++) {
-    fprintf(arquivo, "Movimento %d: (%d, %d) -> (%d, %d)\n",
-            i + 1,
-            movimentos[i].origem_x, movimentos[i].origem_y,
-            movimentos[i].destino_x, movimentos[i].destino_y);
-  }
-
-  fclose(arquivo);
-  printf("Movimentos salvos no arquivo %s\n", nomeArquivo);
-}
-
 // Função principal
 int main(void) 
 {
@@ -193,17 +193,19 @@ int main(void)
   if (resolverTabuleiro(MOVIMENTOS_MAX))
   {
     printf("Solução encontrada!\n");
-    
+
     // Imprime o estado do tabuleiro após cada movimento
     for (int i = 0; i < num_movimentos; i++) {
       printf("Estado do tabuleiro após o movimento %d:\n", i + 1);
       imprimirTabuleiro(estados[i].tabuleiro);
     }
+
+    // Imprime o estado final do tabuleiro
     printf("Estado final do tabuleiro:\n");
     imprimirTabuleiro(tabuleiro);
 
-    imprimirCaminho();
-    salvarMovimentosEmArquivo("RestaUm.out");
+    // Salva todos os estados do tabuleiro em um arquivo
+    salvarTodosEstadosEmArquivo("RestaUm.out");
   }
   else
   {
