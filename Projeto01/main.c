@@ -62,6 +62,7 @@ void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
 }
 
 // Função para salvar todos os estados do tabuleiro em um arquivo
+// Função para salvar todos os estados do tabuleiro em um arquivo
 void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   FILE* arquivo = fopen(nomeArquivo, "w");
   if (arquivo == NULL) {
@@ -70,7 +71,7 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   }
 
   fprintf(arquivo, "Estados do tabuleiro:\n");
-  for (int i = 0; i <= num_movimentos; i++) {
+  for (int i = 1; i < num_movimentos; i++) {
     fprintf(arquivo, "Estado %d:\n", i + 1);
     for (int linha = 0; linha < TAM; linha++) {
       for (int coluna = 0; coluna < TAM; coluna++) {
@@ -87,9 +88,25 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
     fprintf(arquivo, "\n");
   }
 
+  // Imprime o estado final do tabuleiro
+  fprintf(arquivo, "Estado final do tabuleiro:\n");
+  for (int linha = 0; linha < TAM; linha++) {
+    for (int coluna = 0; coluna < TAM; coluna++) {
+      if (tabuleiro[linha][coluna] == 0) {
+        fprintf(arquivo, " # ");
+      } else if (tabuleiro[linha][coluna] == 1) {
+        fprintf(arquivo, " O ");
+      } else if (tabuleiro[linha][coluna] == -1) {
+        fprintf(arquivo, "   "); // Espaço em branco
+      }
+    }
+    fprintf(arquivo, "\n");
+  }
+
   fclose(arquivo);
   printf("Estados salvos no arquivo %s\n", nomeArquivo);
 }
+
 
 int movimentoEhValido(int x1, int y1, int x2, int y2)
 {
