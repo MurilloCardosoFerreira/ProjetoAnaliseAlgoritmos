@@ -71,7 +71,7 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   }
 
   fprintf(arquivo, "Estados do tabuleiro:\n");
-  for (int i = 1; i < num_movimentos; i++) {
+  for (int i = 0; i < num_movimentos; i++) {
     fprintf(arquivo, "Estado %d:\n", i + 1);
     for (int linha = 0; linha < TAM; linha++) {
       for (int coluna = 0; coluna < TAM; coluna++) {
