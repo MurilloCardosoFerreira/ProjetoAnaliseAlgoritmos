@@ -97,6 +97,7 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   printf("Estados salvos no arquivo %s\n", nomeArquivo);
 }
 
+// Função para verificar se o movimento é válido
 int movimentoEhValido(int x1, int y1, int x2, int y2) {
   if (x2 < 0 || x2 >= TAM || y2 < 0 || y2 >= TAM) {
     return 0;
@@ -115,6 +116,7 @@ int movimentoEhValido(int x1, int y1, int x2, int y2) {
   return 1;
 }
 
+// Função para realizar um movimento
 void movimentarPeca(int x1, int y1, int x2, int y2) {
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
@@ -130,6 +132,7 @@ void movimentarPeca(int x1, int y1, int x2, int y2) {
   movimentos[num_movimentos++] = (Movimento){x1, y1, x2, y2};
 }
 
+// Função para desfazer um movimento
 void desfazerMovimento(int x1, int y1, int x2, int y2) {
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
@@ -142,6 +145,7 @@ void desfazerMovimento(int x1, int y1, int x2, int y2) {
   num_movimentos--;
 }
 
+// Função para resolver o tabuleiro
 int resolverTabuleiro(int movimentosRestantes) {
   if (movimentosRestantes == 0 && tabuleiro[3][3] == 1) {
     return 1;
