@@ -9,16 +9,7 @@
 #define TAM 7
 #define MOVIMENTOS_MAX 31
 
-int tabuleiro[TAM][TAM] =
-{
-  {0, 0, 1, 1, 1, 0, 0},
-  {0, 0, 1, 1, 1, 0, 0},
-  {1, 1, 1, 1, 1, 1, 1},
-  {1, 1, 1, -1, 1, 1, 1},
-  {1, 1, 1, 1, 1, 1, 1},
-  {0, 0, 1, 1, 1, 0, 0},
-  {0, 0, 1, 1, 1, 0, 0}
-};
+int tabuleiro[TAM][TAM];
 
 // Estrutura para armazenar os movimentos das peças
 typedef struct {
@@ -61,7 +52,6 @@ void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
   printf("\n");
 }
 
-// Função para salvar todos os estados do tabuleiro em um arquivo
 // Função para salvar todos os estados do tabuleiro em um arquivo
 void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   FILE* arquivo = fopen(nomeArquivo, "w");
@@ -107,31 +97,25 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   printf("Estados salvos no arquivo %s\n", nomeArquivo);
 }
 
-
-int movimentoEhValido(int x1, int y1, int x2, int y2)
-{
-  if (x2 < 0 || x2 >= TAM || y2 < 0 || y2 >= TAM)
-  {
+int movimentoEhValido(int x1, int y1, int x2, int y2) {
+  if (x2 < 0 || x2 >= TAM || y2 < 0 || y2 >= TAM) {
     return 0;
   }
-  if (tabuleiro[x1][y1] != 1 || tabuleiro[x2][y2] != -1)
-  {
+  if (tabuleiro[x1][y1] != 1 || tabuleiro[x2][y2] != -1) {
     return 0;
   }
 
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
 
-  if (tabuleiro[xMedia][yMedia] != 1)
-  {
+  if (tabuleiro[xMedia][yMedia] != 1) {
     return 0;
   }
 
   return 1;
 }
 
-void movimentarPeca(int x1, int y1, int x2, int y2)
-{
+void movimentarPeca(int x1, int y1, int x2, int y2) {
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
 
@@ -146,8 +130,7 @@ void movimentarPeca(int x1, int y1, int x2, int y2)
   movimentos[num_movimentos++] = (Movimento){x1, y1, x2, y2};
 }
 
-void desfazerMovimento(int x1, int y1, int x2, int y2)
-{
+void desfazerMovimento(int x1, int y1, int x2, int y2) {
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
 
@@ -159,47 +142,60 @@ void desfazerMovimento(int x1, int y1, int x2, int y2)
   num_movimentos--;
 }
 
-int resolverTabuleiro(int movimentosRestantes)
-{
-  if (movimentosRestantes == 0 && tabuleiro[3][3] == 1)
-  {
+int resolverTabuleiro(int movimentosRestantes) {
+  if (movimentosRestantes == 0 && tabuleiro[3][3] == 1) {
     return 1;
   }
 
   int direcaoX[] = {2, -2, 0, 0};
   int direcaoY[] = {0, 0, 2, -2};
 
-  for (int x1 = 0; x1 < TAM; x1++)
-    for (int y1 = 0; y1 < TAM; y1++)
-      {
-        if (tabuleiro[x1][y1] == 1)
-        {
-          for (int i = 0; i < 4; i++)
-            {
-              int x2 = x1 + direcaoX[i];
-              int y2 = y1 + direcaoY[i];
+  for (int x1 = 0; x1 < TAM; x1++) {
+    for (int y1 = 0; y1 < TAM; y1++) {
+      if (tabuleiro[x1][y1] == 1) {
+        for (int i = 0; i < 4; i++) {
+          int x2 = x1 + direcaoX[i];
+          int y2 = y1 + direcaoY[i];
 
-              if (movimentoEhValido(x1, y1, x2, y2))
-              {
-                movimentarPeca(x1, y1, x2, y2);
+          if (movimentoEhValido(x1, y1, x2, y2)) {
+            movimentarPeca(x1, y1, x2, y2);
 
-                if (resolverTabuleiro(movimentosRestantes - 1))
-                {
-                  return 1;
-                }
-
-                desfazerMovimento(x1, y1, x2, y2);
-              }
+            if (resolverTabuleiro(movimentosRestantes - 1)) {
+              return 1;
             }
+
+            desfazerMovimento(x1, y1, x2, y2);
+          }
         }
       }
+    }
+  }
 
   return 0;
 }
 
+// Função para ler o tabuleiro de um arquivo
+void lerTabuleiroDeArquivo(const char* nomeArquivo) {
+  FILE* arquivo = fopen(nomeArquivo, "r");
+  if (arquivo == NULL) {
+    printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
+    exit(1);
+  }
+
+  for (int i = 0; i < TAM; i++) {
+    for (int j = 0; j < TAM; j++) {
+      fscanf(arquivo, "%d", &tabuleiro[i][j]);
+    }
+  }
+
+  fclose(arquivo);
+}
+
 // Função principal
-int main(void) 
-{
+int main(void) {
+  // Lê o tabuleiro inicial do arquivo "RestaUm.in"
+  lerTabuleiroDeArquivo("RestaUm.in");
+
   // Inicializa o estado do tabuleiro no início
   copiarTabuleiro(tabuleiro, &estados[0]);
   num_movimentos = 0;
@@ -207,8 +203,7 @@ int main(void)
   printf("Estado inicial do tabuleiro:\n");
   imprimirTabuleiro(tabuleiro);
 
-  if (resolverTabuleiro(MOVIMENTOS_MAX))
-  {
+  if (resolverTabuleiro(MOVIMENTOS_MAX)) {
     printf("Solução encontrada!\n");
 
     // Imprime o estado do tabuleiro após cada movimento
@@ -223,9 +218,7 @@ int main(void)
 
     // Salva todos os estados do tabuleiro em um arquivo
     salvarTodosEstadosEmArquivo("RestaUm.out");
-  }
-  else
-  {
+  } else {
     printf("Não foi possível encontrar uma solução.\n");
   }
 
