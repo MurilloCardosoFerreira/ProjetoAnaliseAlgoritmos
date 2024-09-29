@@ -3,11 +3,6 @@
 //Nome: Davi de Carvalho Sampaio            RA: 10428169
 
 
-//Nome: Alexandre Luppi Severo e Silva      RA: 10419724
-//Nome: Murillo Cardoso Ferreira            RA: 10418082
-//Nome: Davi de Carvalho Sampaio            RA: 10428169
-
-
 #include <stdio.h>
 #include <stdlib.h> // Para malloc e free
 
