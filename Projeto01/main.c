@@ -3,13 +3,18 @@
 //Nome: Davi de Carvalho Sampaio            RA: 10428169
 
 
+//Nome: Alexandre Luppi Severo e Silva      RA: 10419724
+//Nome: Murillo Cardoso Ferreira            RA: 10418082
+//Nome: Davi de Carvalho Sampaio            RA: 10428169
+
+
 #include <stdio.h>
 #include <stdlib.h> // Para malloc e free
 
 #define TAM 7
 #define MOVIMENTOS_MAX 31
 
-int tabuleiro[TAM][TAM];
+char tabuleiro[TAM][TAM];
 
 // Estrutura para armazenar os movimentos das peças
 typedef struct {
@@ -19,7 +24,7 @@ typedef struct {
 
 // Estrutura para armazenar o estado do tabuleiro
 typedef struct {
-  int tabuleiro[TAM][TAM];
+  char tabuleiro[TAM][TAM];
 } EstadoTabuleiro;
 
 Movimento movimentos[MOVIMENTOS_MAX];
@@ -27,7 +32,7 @@ EstadoTabuleiro estados[MOVIMENTOS_MAX];
 int num_movimentos = 0;
 
 // Função para copiar o estado do tabuleiro
-void copiarTabuleiro(int origem[TAM][TAM], EstadoTabuleiro* destino) {
+void copiarTabuleiro(char origem[TAM][TAM], EstadoTabuleiro* destino) {
   for (int i = 0; i < TAM; i++) {
     for (int j = 0; j < TAM; j++) {
       destino->tabuleiro[i][j] = origem[i][j];
@@ -36,20 +41,14 @@ void copiarTabuleiro(int origem[TAM][TAM], EstadoTabuleiro* destino) {
 }
 
 // Função para imprimir o estado do tabuleiro
-void imprimirTabuleiro(int tabuleiro[TAM][TAM]) {
-  for (int i = 0; i < TAM; i++) {
-    for (int j = 0; j < TAM; j++) {
-      if (tabuleiro[i][j] == 0) {
-        printf(" # ");
-      } else if (tabuleiro[i][j] == 1) {
-        printf(" O ");
-      } else if (tabuleiro[i][j] == -1) {
-        printf("   "); // Espaço em branco
-      }
-    }
-    printf("\n");
-  }
-  printf("\n");
+void imprimirTabuleiro(char tabuleiro[TAM][TAM]) {
+	for (int i = 0; i < TAM; i++){
+		for (int j = 0; j < TAM; j++){
+			printf("%c ", tabuleiro[i][j]); // Exibe o caractere diretamente
+		}
+		printf("\n");
+	}
+	printf("\n");
 }
 
 // Função para salvar todos os estados do tabuleiro em um arquivo
@@ -65,11 +64,11 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
     fprintf(arquivo, "Estado %d:\n", i + 1);
     for (int linha = 0; linha < TAM; linha++) {
       for (int coluna = 0; coluna < TAM; coluna++) {
-        if (estados[i].tabuleiro[linha][coluna] == 0) {
+        if (estados[i].tabuleiro[linha][coluna] == '#') {
           fprintf(arquivo, " # ");
-        } else if (estados[i].tabuleiro[linha][coluna] == 1) {
-          fprintf(arquivo, " O ");
-        } else if (estados[i].tabuleiro[linha][coluna] == -1) {
+        } else if (estados[i].tabuleiro[linha][coluna] == 'o') {
+          fprintf(arquivo, " o ");
+        } else{
           fprintf(arquivo, "   "); // Espaço em branco
         }
       }
@@ -82,11 +81,11 @@ void salvarTodosEstadosEmArquivo(const char* nomeArquivo) {
   fprintf(arquivo, "Estado final do tabuleiro:\n");
   for (int linha = 0; linha < TAM; linha++) {
     for (int coluna = 0; coluna < TAM; coluna++) {
-      if (tabuleiro[linha][coluna] == 0) {
+      if (tabuleiro[linha][coluna] == '#') {
         fprintf(arquivo, " # ");
-      } else if (tabuleiro[linha][coluna] == 1) {
-        fprintf(arquivo, " O ");
-      } else if (tabuleiro[linha][coluna] == -1) {
+      } else if (tabuleiro[linha][coluna] == 'o') {
+        fprintf(arquivo, " o ");
+      } else {
         fprintf(arquivo, "   "); // Espaço em branco
       }
     }
@@ -102,14 +101,14 @@ int movimentoEhValido(int x1, int y1, int x2, int y2) {
   if (x2 < 0 || x2 >= TAM || y2 < 0 || y2 >= TAM) {
     return 0;
   }
-  if (tabuleiro[x1][y1] != 1 || tabuleiro[x2][y2] != -1) {
+  if (tabuleiro[x1][y1] != 'o' || tabuleiro[x2][y2] != ' ') {
     return 0;
   }
 
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
 
-  if (tabuleiro[xMedia][yMedia] != 1) {
+  if (tabuleiro[xMedia][yMedia] != 'o') {
     return 0;
   }
 
@@ -124,9 +123,9 @@ void movimentarPeca(int x1, int y1, int x2, int y2) {
   // Armazena o estado atual do tabuleiro antes do movimento
   copiarTabuleiro(tabuleiro, &estados[num_movimentos]);
 
-  tabuleiro[x1][y1] = -1;
-  tabuleiro[xMedia][yMedia] = -1;
-  tabuleiro[x2][y2] = 1;
+  tabuleiro[x1][y1] = ' ';
+  tabuleiro[xMedia][yMedia] = ' ';
+  tabuleiro[x2][y2] ='o';
 
   // Armazena o movimento
   movimentos[num_movimentos++] = (Movimento){x1, y1, x2, y2};
@@ -137,9 +136,9 @@ void desfazerMovimento(int x1, int y1, int x2, int y2) {
   int xMedia = (x1 + x2) / 2;
   int yMedia = (y1 + y2) / 2;
 
-  tabuleiro[x1][y1] = 1;
-  tabuleiro[xMedia][yMedia] = 1;
-  tabuleiro[x2][y2] = -1;
+  tabuleiro[x1][y1] = 'o';
+  tabuleiro[xMedia][yMedia] = 'o';
+  tabuleiro[x2][y2] = ' ';
 
   // Desfaz o último movimento armazenado
   num_movimentos--;
@@ -147,7 +146,7 @@ void desfazerMovimento(int x1, int y1, int x2, int y2) {
 
 // Função para resolver o tabuleiro
 int resolverTabuleiro(int movimentosRestantes) {
-  if (movimentosRestantes == 0 && tabuleiro[3][3] == 1) {
+  if (movimentosRestantes == 0 && tabuleiro[3][3] == 'o') {
     return 1;
   }
 
@@ -156,7 +155,7 @@ int resolverTabuleiro(int movimentosRestantes) {
 
   for (int x1 = 0; x1 < TAM; x1++) {
     for (int y1 = 0; y1 < TAM; y1++) {
-      if (tabuleiro[x1][y1] == 1) {
+      if (tabuleiro[x1][y1] == 'o') {
         for (int i = 0; i < 4; i++) {
           int x2 = x1 + direcaoX[i];
           int y2 = y1 + direcaoY[i];
@@ -180,19 +179,27 @@ int resolverTabuleiro(int movimentosRestantes) {
 
 // Função para ler o tabuleiro de um arquivo
 void lerTabuleiroDeArquivo(const char* nomeArquivo) {
-  FILE* arquivo = fopen(nomeArquivo, "r");
-  if (arquivo == NULL) {
-    printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
-    exit(1);
-  }
-
-  for (int i = 0; i < TAM; i++) {
-    for (int j = 0; j < TAM; j++) {
-      fscanf(arquivo, "%d", &tabuleiro[i][j]);
-    }
-  }
-
-  fclose(arquivo);
+	FILE* arquivo = fopen(nomeArquivo, "r");
+	if (arquivo == NULL){
+		perror("Erro ao abrir o arquivo");
+		exit(1);
+	}
+	
+	for (int i = 0; i < TAM; i++){
+		for (int j = 0; j < TAM; j++){
+			// Lê um caractere diretamente
+			char c = fgetc(arquivo);
+			// Se for um caracterte de nova linha, ajuste j para não avançar na matriz
+			if (c == '\n') {
+				j--; // Mantém j na mesma coluna
+				continue; // Continua para o próximo caractere
+			}
+			// Armazena o caractere lido
+			tabuleiro[i][j] = c;
+		}
+	}
+	
+	fclose(arquivo);
 }
 
 // Função principal
