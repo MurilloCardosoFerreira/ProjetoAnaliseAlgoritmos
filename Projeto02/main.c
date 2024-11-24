@@ -3,7 +3,7 @@
 //Nome: MURILLO CARDOSO FERREIRA         RA: 10418082
 //Nome: RODRIGO LUCAS ROSALES            RA: 10365071
 
-//Link do Video: (video em progresso)
+//Link do Video: https://www.youtube.com/watch?v=aY82SlRZ918&ab_channel=AlexandreLuppi
 
 #include <stdio.h>
 #include <limits.h>
